@@ -1,0 +1,34 @@
+import javax.swing.JFrame;
+
+/**
+ * The GUI part for power paint.
+ * @author Yunhan Tu
+ * @version 11/10/2017
+ */
+public class PowerPaintGui {
+    /**
+     *  The main frame for GUI.
+     */
+    private final JFrame myFrame = new JFrame();
+    
+
+
+    /**
+     * 
+     */
+    public PowerPaintGui() {
+        
+    }
+
+    /**
+     * 
+     */
+    public void start() {
+        final JFrame frame = new JFrame("Assignment 5");
+        frame.setSize(600, 500);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+    
+
+}

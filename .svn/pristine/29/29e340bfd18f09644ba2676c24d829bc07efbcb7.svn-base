@@ -1,0 +1,241 @@
+/*
+ * TCSS 305
+ * Assignment 5 - PowerPaintGui
+ */
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+
+
+
+
+
+/**
+ * The GUI part for power paint.
+ * @author Yunhan Tu
+ * @version 11/10/2017
+ */
+public class PowerPaintGui extends JFrame {
+    /**
+     * A generated serial version UID for object Serialization.
+     */
+    private static final long serialVersionUID = 1L;
+    
+    /**
+     * the spacing number for slider.
+     */
+    private static final int MYSPACING = 5;
+
+    /**
+     *  The main frame for GUI.
+     */
+    private final JFrame myFrame = new JFrame();
+    
+    /**
+     * a RadioButton.
+     */
+    private final JRadioButton myPencil = new JRadioButton("Pencil");
+    /**
+     * a RadioButton.
+     */
+    private final JRadioButton myLine = new JRadioButton("Line");
+    /**
+     * a RadioButton.
+     */
+    private final JRadioButton myRectangle = new JRadioButton("Rectangle");
+    /**
+     * a RadioButton.
+     */
+    private final JRadioButton myEllipse = new JRadioButton("Ellipse");
+    /**
+     * a RadioButton.
+     */
+    private final JRadioButton myEraser = new JRadioButton("Eraser");
+ 
+
+    /**
+     * color for Primary.
+     */
+    private Color myPrimaryColor;
+    /**
+     * Color for Secondary.
+     */
+    private Color mySecondaryColor;
+    /**
+     * the slider for thickness.
+     */
+    private final JSlider mySlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 1);
+    
+    
+    
+    /**
+     * represents a panel.
+     */
+    private final DrawPanel myPanel;
+    
+ 
+    /**
+     * the constructor.
+     */
+    public PowerPaintGui() {
+        super("Assignment 5");
+        myPanel = new DrawPanel();
+    }
+
+    /**
+     * the start method.
+     */
+    public void start() {  
+        creatRadioButton();
+        setJMenuBar(creatMenuBar());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.add(createToolBar(), BorderLayout.SOUTH);
+        this.add(myPanel, BorderLayout.CENTER);
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+    }
+
+    /**
+     * Create the menu bar and add them up.
+     * @return menBar the menu
+     */
+    private JMenuBar creatMenuBar() {
+        final JMenuBar menuBar = new JMenuBar();
+        final JMenu optionsMenu = new JMenu("Options");
+        final JMenu toolsMenu = new JMenu("Tools");
+        final JMenu helpMenu = new JMenu("Help");
+        final JMenu thckNess = new JMenu("ThickNess");
+        final JMenuItem primaryColor = new JMenuItem("PrimaryColor");
+        primaryColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent theE) {
+                myPrimaryColor = JColorChooser.showDialog(menuBar,
+                                                       "Choose Primary color",
+                                                       Color.BLACK);
+                if (myPrimaryColor == null) {
+                    myPrimaryColor = Color.BLACK;
+                }   
+            }
+        });
+        
+        final JMenuItem secondaryColor = new JMenuItem("SecondaryColor"); 
+        secondaryColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent theE) {
+                mySecondaryColor = JColorChooser.showDialog(menuBar,
+                                                       "Choose Secondary color",
+                                                       Color.BLACK);
+                if (mySecondaryColor == null) {
+                    mySecondaryColor = Color.BLACK;
+                }   
+            }
+        });
+        
+        final JMenuItem about = new JMenuItem("ABOUT");
+        final JMenuItem clear = new JMenuItem("clear..");
+        clear.setEnabled(false);
+        mySlider.setMajorTickSpacing(MYSPACING);
+        mySlider.setPaintTicks(true);
+        mySlider.setPaintLabels(true);
+        mySlider.setMinorTickSpacing(1);
+        mySlider.setBackground(Color.WHITE);
+        mySlider.setForeground(Color.BLACK);
+        optionsMenu.add(thckNess);
+        optionsMenu.addSeparator();
+        thckNess.add(mySlider);
+        optionsMenu.add(primaryColor);
+        optionsMenu.add(secondaryColor);
+        optionsMenu.addSeparator();
+        optionsMenu.add(clear);
+        toolsMenu.add(myPencil);
+        toolsMenu.add(myLine);
+        toolsMenu.add(myRectangle);
+        toolsMenu.add(myEllipse);
+        toolsMenu.add(myEraser);
+        myPencil.setSelected(true);
+        
+        about.addActionListener(new ActionListener() {
+            /**
+             * 
+             */
+            public void actionPerformed(final ActionEvent theE) {
+                    JOptionPane.showMessageDialog(myFrame, "Yunhan Tu\n"
+                        + "Autumn 2017\n"
+                        + "TCSS 305 Assignment 5", "About",
+                        JOptionPane.INFORMATION_MESSAGE, new ImageIcon("./images/pencil.gif"));
+                
+            }
+            
+        });
+   
+        helpMenu.add(about);
+        menuBar.add(optionsMenu);
+        menuBar.add(toolsMenu);
+        menuBar.add(helpMenu);
+        return menuBar;
+        
+    }
+    
+    /**
+     * add every single radio button into group button.
+     * @return toolRadioButton Button group with every radio button
+     */
+    private ButtonGroup creatRadioButton() {
+        final ButtonGroup toolRadioButton = new ButtonGroup();
+        toolRadioButton.add(myPencil);
+        toolRadioButton.add(myLine);
+        toolRadioButton.add(myRectangle);
+        toolRadioButton.add(myEllipse);
+        toolRadioButton.add(myEraser);
+        return toolRadioButton;
+    }
+    
+    /**
+     * A helper method to make a ToolBar.
+     * 
+     * @return the example Tool Bar
+     */
+    private JToolBar createToolBar() {
+        final JToolBar toolbar = new JToolBar();
+        final ButtonGroup group = new ButtonGroup();
+        JToggleButton b = new JToggleButton(" Pencil ");
+        b.setIcon(new ImageIcon("./images/pencil.gif"));
+        toolbar.add(b);
+        group.add(b);
+        b = new JToggleButton(" Line ");
+        b.setIcon(new ImageIcon("./images/line.gif"));
+        group.add(b);
+        toolbar.add(b);
+        b = new JToggleButton(" Rectangle ");
+        b.setIcon(new ImageIcon("./images/rectangle.gif"));
+        toolbar.add(b);
+        group.add(b);
+        b = new JToggleButton(" Ellipse ");
+        b.setIcon(new ImageIcon("./images/ellipse.gif"));
+        toolbar.add(b);
+        group.add(b);
+        b = new JToggleButton(" Eraser ");
+        b.setIcon(new ImageIcon("./images/eraser.gif"));
+        toolbar.add(b);
+        group.add(b);
+        
+        return toolbar;
+    }
+
+
+}

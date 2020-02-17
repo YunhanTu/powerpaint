@@ -1,0 +1,37 @@
+/*
+ * TCSS 305
+ * Assignment 5 - PowerPaintGui
+ */
+
+import java.awt.EventQueue;
+
+
+/**
+ * the main class.
+ * @author Yunhan Tu
+ * @version 2017/11/10
+ */
+public final class Main {
+
+    /**
+     * Private constructor, to prevent instantiation of this class.
+     */
+    private Main() {
+        throw new IllegalStateException();
+    }
+
+    /**
+     * The main method, invokes the PowerPaint GUI. Command line arguments are
+     * ignored.
+     * 
+     * @param theArgs Command line arguments.
+     */
+    public static void main(final String[] theArgs) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new PowerPaintGui().start();
+            }
+        });
+    }
+}

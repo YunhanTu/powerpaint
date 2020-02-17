@@ -1,0 +1,45 @@
+/*
+ * TCSS 305
+ * Assignment 5 - PowerPaint
+ */
+
+package tool;
+
+import java.awt.BasicStroke;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+
+/**
+ * This class draws a line. 
+ * 
+ * @author Yunhan Tu
+ * @version 2017/11/17
+ */
+public class Line extends AbstractTool {
+    
+    /** 
+     * Override method that draws a line.
+     * 
+     * @param theGraphics the graphic to draw with.
+     * @param theShape the shape to be drawn.
+     */
+    @Override
+    public void drawingMethod(final Graphics theGraphics, final DrawShape theShape) {
+        final Path2D path = new Path2D.Double();
+        path.moveTo(theShape.getStartPoint().getX(), 
+                      theShape.getStartPoint().getY());
+        path.lineTo(theShape.getEndPoint().getX(),
+                      theShape.getEndPoint().getY());
+        final Graphics2D g2d = (Graphics2D) theGraphics;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+                             RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setStroke(new BasicStroke(theShape.getMyThick()));
+        g2d.setColor(theShape.getMyColor());
+        g2d.draw(path);   
+    }
+    
+   
+}

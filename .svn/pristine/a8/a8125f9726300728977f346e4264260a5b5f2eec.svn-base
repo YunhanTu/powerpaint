@@ -1,0 +1,130 @@
+/*
+ * TCSS 305
+ * Assignment 5 - PowerPaintGui
+ */
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+
+/**
+ * 
+ * @author Yunhan Tu
+ * @version 2017/11/10
+ *
+ */
+public class DrawPanel extends JPanel {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /** 
+     * The default width value. 
+     */
+    private static final int WIDTH = 500; 
+    
+    /** 
+     * The default height value. 
+     */
+    private static final int HEIGHT = 300;
+    
+    
+    /** 
+     * The default size for this JPanel. 
+     */
+    private static final Dimension DEFUALT_SIZE = new Dimension(WIDTH, HEIGHT);
+    /**
+     * field for the point.
+     */
+    private final Point myP1;
+    
+    /**
+     * field for the point.
+     */
+    private final Point myP2;
+    
+    
+    /**
+     * Actual Shape.
+     */
+    private GeneralPath myLine;
+    
+    
+ 
+    
+    /**
+     * 
+     */
+    public DrawPanel() {
+        super();
+        myLine = new GeneralPath();
+        setPreferredSize(DEFUALT_SIZE);
+        setBackground(Color.WHITE);  
+        myP1 = new Point();
+        myP2 = new Point();
+        final Mouser m = new Mouser();
+        addMouseListener(m);
+        addMouseMotionListener(m);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics); 
+        final Graphics2D pen = (Graphics2D) theGraphics;
+        pen.setColor(Color.BLACK);
+        pen.draw(myLine);
+    }
+
+    
+    
+    /**
+     * the moser listener.
+     * @author Yunhan Tu
+     * @version 2017/11/10
+     *
+     */
+    private class Mouser extends MouseAdapter {
+        
+        @Override
+        public void mousePressed(final MouseEvent theEvent) {
+            
+            myP1.setLocation(theEvent.getX(), theEvent.getY());
+            myP2.setLocation(theEvent.getX(), theEvent.getY());
+            
+            if (SwingUtilities.isLeftMouseButton(theEvent)) {
+                
+                final Line2D line = new Line2D.Double(myP1, myP2);
+                myLine = new GeneralPath(line);
+                repaint();
+            }
+        }
+        
+        @Override
+        public void mouseReleased(final MouseEvent theEvent) { 
+           
+            repaint();
+        }
+        
+        @Override
+        public void mouseDragged(final MouseEvent theEvent) {
+            myP2.setLocation(theEvent.getX(), theEvent.getY());
+            
+            if (SwingUtilities.isLeftMouseButton(theEvent)) {
+                
+                myLine.lineTo(theEvent.getX(), theEvent.getY());
+            }
+            repaint();
+        }
+    }
+}

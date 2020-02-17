@@ -1,0 +1,77 @@
+/*
+ * TCSS 305
+ * Assignment 5 - PowerPaint
+ */
+
+package view;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import tool.abstractTool;
+
+
+/**
+ * This class create the shape.
+ * 
+ * @author Yunhan Tu
+ * @version 2017/11/17
+ */
+public class TheShape extends AbstractAction {
+
+    /**
+     *  A generated serial ID number. 
+     */
+    private static final long serialVersionUID = 1L;
+    
+    /** 
+     * Index which contains the first letter of the class.
+     */
+    private static final int START_STRING = 5;
+
+    /** 
+     * A tool. 
+     */
+    private final abstractTool myTool;
+
+    /**
+     * The panel to be drawn on. 
+     */
+    private final DrawPanel myDrawing;
+    
+   
+
+  /**
+   * constructor of the shape.
+   * 
+   * @param theTool the tool.
+   * @param theIcon an icon to be added.
+   * @param thePanel the panel to drawn on.
+
+   */
+    public TheShape(final abstractTool theTool, final Icon theIcon, final DrawPanel thePanel) {
+        super(theTool.getName().substring(START_STRING, theTool.getName().length()));
+        final ImageIcon icon = (ImageIcon) theIcon;
+        putValue(Action.LARGE_ICON_KEY, icon);
+        putValue(Action.MNEMONIC_KEY,
+                 KeyEvent.getExtendedKeyCodeForChar(theTool.getClass().
+                                                    getName().charAt(START_STRING)));
+        putValue(Action.SELECTED_KEY, true);
+        myDrawing = thePanel;
+        myTool = theTool;
+       
+
+    }
+    /**
+     * Override method implemented.
+     */
+    @Override
+    public void actionPerformed(final ActionEvent theEvent) {
+        myDrawing.setTool(myTool);
+    }
+
+
+}

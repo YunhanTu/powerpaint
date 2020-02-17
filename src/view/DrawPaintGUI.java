@@ -1,0 +1,331 @@
+/*
+ * TCSS 305
+ * Assignment 5 - PowerPaint
+ */
+
+package view;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSlider;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import tool.CreateIcon;
+import tool.Ellipse;
+import tool.Eraser;
+import tool.Line;
+import tool.Pencil;
+import tool.Rectangle;
+import tool.AbstractTool;
+
+
+/**
+ * This program is a paint application that allows.
+ * the user to draw with a pencil, ellipse, rectangle and line¡£
+ * @author Yunhan Tu
+ * @version 2017/11/17
+ */
+public class DrawPaintGUI {
+
+    /** 
+     * Slider's max value. 
+     */
+    private static final int SLIDER_MAX = 20;
+
+    /** 
+     * Slider's tick value. 
+     */
+    private static final int SLIDER_INIT = 5;
+
+    /**
+     * Slider's  tick value. 
+     */
+    private static final int MINOR_TICK = 1;
+    
+    /** 
+     * The default primary color's red value. 
+     */
+    private static final int RGB_RL = 51;
+    
+    /** 
+     * The default primary color's blue value. 
+     */
+    private static final int RGB_BL = 111;
+    
+    /** 
+     * The default secondary color's red value. 
+     */
+    private static final int RGB_RR = 232;
+    
+    /** 
+     *The default secondary color's green value. 
+     */
+    private static final int RGB_GR = 211;
+    
+    /** 
+     *The default secondary color's blue value.
+     */
+    private static final int RGB_BR = 162;
+    /**
+     *frame.
+     */
+    private JFrame myFrame;
+
+    /** 
+     * A panel. 
+     */
+    private final DrawPanel myDrawing = new DrawPanel();
+
+    /** 
+     * The Icon. 
+     */
+    private final ImageIcon myFrameIcon = new ImageIcon("./images/images.jpg");
+    /** 
+     * a JMenuItem.
+     */
+    private final JMenuItem myClear = new JMenuItem("Clear");
+    
+    
+    /**
+     * the slider.
+     */
+    private final JSlider mySlide = new JSlider(SwingConstants.HORIZONTAL, 0, SLIDER_MAX, 10);
+    
+    /** 
+     * The primary color. 
+     */
+    private Color myColorP = new Color(RGB_RL, 0, RGB_BL);
+    
+    /** 
+     * The secondary color.
+     */
+    private Color myColorS = new Color(RGB_RR, RGB_GR, RGB_BR);
+    
+    /** 
+     * The icon for the primary color menu item. 
+     */
+    private CreateIcon myColorIconP;
+    
+    /** 
+     * The icon for the secondary color menu item. 
+     */
+    private CreateIcon myColorIconS;
+    /**
+     * the list of the object shape.
+     */
+    private final ArrayList<TheShape> myShapeProperties = new ArrayList<TheShape>();
+
+    /**
+     * The constructor. 
+     */
+    public DrawPaintGUI() { 
+        myShapeProperties.add(new TheShape((AbstractTool) new Pencil(), 
+                                           new ImageIcon("./images/pencil.gif"), myDrawing
+                                           ));
+        myShapeProperties.add(new TheShape((AbstractTool) new Line(), 
+                                           new ImageIcon("./images/line.gif"), myDrawing));
+        myShapeProperties.add(new TheShape((AbstractTool) new Rectangle(), 
+                                           new ImageIcon("./images/rectangle.gif"), myDrawing
+                                           ));
+        myShapeProperties.add(new TheShape((AbstractTool) new Ellipse(),
+                                           new ImageIcon("./images/ellipse.gif"), myDrawing 
+                                           ));
+        myShapeProperties.add(new TheShape((AbstractTool) new Eraser(), 
+                                           new ImageIcon("./images/eraser.gif"), myDrawing));
+    }
+
+
+    /**
+     * Sets the GUI.
+     */
+    public void start() { 
+        myFrame = new JFrame("Assignment 5");
+        myFrame.setIconImage(myFrameIcon.getImage()); 
+        myFrame.setVisible(true);
+        myFrame.add(toolBar(myShapeProperties), BorderLayout.SOUTH);
+        myFrame.setJMenuBar(CreatMenuBar(myShapeProperties));
+        myDrawing.setBackground(Color.WHITE);
+        drawPanel();
+        myFrame.pack();
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    /**
+     * 
+     * @param theDrawActions
+     * @return toolbar the menu bar
+     */
+    public final JMenuBar CreatMenuBar(List<TheShape> theDrawActions) {
+        final JMenuBar menuBar = new JMenuBar();
+        final JMenu options = new JMenu("Options");
+        options.setMnemonic(KeyEvent.VK_O);
+        options.addSeparator();
+        final JMenu thickness = new JMenu("Thickness");
+        mySlide.setMajorTickSpacing(SLIDER_INIT);
+        mySlide.setMinorTickSpacing(MINOR_TICK);
+        mySlide.setPaintTicks(true);
+        mySlide.setPaintLabels(true);
+        mySlide.addChangeListener(new ChangeListener() {
+            public void stateChanged(final ChangeEvent theEvent) {
+                myDrawing.setThickness(mySlide.getValue());    
+                myDrawing.repaint();
+            }
+        });
+        thickness.add(mySlide);
+        final JMenuItem colorMenuPri = new JMenuItem("Primary Color...");
+        final JMenuItem colorMenuSec = new JMenuItem("Secondary Color...");
+        colorMenuPri.addActionListener(new ActionListener() {
+            /**
+             * inner class of listener for about.
+             */
+            public void actionPerformed(final ActionEvent theE) {
+                
+                final Color c = JColorChooser.showDialog(myDrawing, 
+                        "Choose Primary Color...", Color.BLACK);
+                myColorP = c; 
+                myColorIconP.setColor(myColorP);
+                myDrawing.setColorP(myColorP);
+            }
+            });
+        colorMenuSec.addActionListener(new ActionListener() {
+            /**
+             * inner class of listener for about.
+             */
+            public void actionPerformed(final ActionEvent theE) {
+                final Color c = JColorChooser.showDialog(myDrawing, 
+                        "Choose Secondary Color...", Color.GREEN);
+                myColorS = c;
+                myColorIconS.setColor(myColorS);
+                myDrawing.setColorS(myColorS);  
+            }   
+        });
+        colorMenuPri.setMnemonic(KeyEvent.VK_P);
+        colorMenuSec.setMnemonic(KeyEvent.VK_S);
+        myColorIconP = new CreateIcon(myColorP);
+        myColorIconS = new CreateIcon(myColorS);
+        options.add(thickness);
+        thickness.setMnemonic(KeyEvent.VK_T);
+        options.addSeparator();
+        colorMenuPri.setIcon(myColorIconP);
+        colorMenuSec.setIcon(myColorIconS);
+        options.add(colorMenuPri);
+        options.add(colorMenuSec);
+        options.addSeparator();
+        myClear.setMnemonic(KeyEvent.VK_C);
+        options.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(final MenuEvent theE) {
+                if (myDrawing.getList().isEmpty()) {
+                    myClear.setEnabled(false);
+                } else {
+                    myClear.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void menuCanceled(final MenuEvent arg0) {
+                // TODO Auto-generated method stub
+            }
+            @Override
+            public void menuDeselected(final MenuEvent arg0) {
+                // TODO Auto-generated method stub    
+            }
+        });
+
+        
+        myClear.addActionListener(new AbstractAction("Clear..") {
+            private static final long serialVersionUID = 1L;
+            public void actionPerformed(final ActionEvent theEvent) {
+                myDrawing.clearAll();
+                myDrawing.repaint();
+            }
+        });  
+        options.add(myClear);
+        final JMenu help = new JMenu("Help");
+        help.setMnemonic(KeyEvent.VK_H);
+        final JMenuItem about = new JMenuItem("ABOUT...");
+        about.addActionListener(new ActionListener() {
+            /**
+             * inner class of listener for about.
+             */
+            public void actionPerformed(final ActionEvent theE) {
+                JOptionPane.showMessageDialog(myFrame, "Yunhan Tu\n"
+                        + "Autumn 2017\n"
+                        + "TCSS 305 Assignment 5", "About",
+                        JOptionPane.INFORMATION_MESSAGE, new ImageIcon
+                        ("./images/pencil.gif"));    
+            }  
+        });
+        about.setMnemonic(KeyEvent.VK_A); 
+        
+        
+        final JMenu tool = new JMenu("Tools");
+        tool.setMnemonic(KeyEvent.VK_T);
+        final ButtonGroup radioButtonGroup = new ButtonGroup();
+        final ArrayList<JRadioButtonMenuItem> list = new ArrayList<JRadioButtonMenuItem>(); 
+        for (final TheShape a: theDrawActions) {
+            final JRadioButtonMenuItem b = new JRadioButtonMenuItem(a);
+            list.add(b);
+            radioButtonGroup.add(b);
+            tool.add(b);
+        }
+        list.get(1).setSelected(true);
+        help.add(about);
+        menuBar.add(options);
+        menuBar.add(tool);
+        menuBar.add(help);
+        return menuBar;
+    }
+    
+    /**
+     * creat the tool bar.
+     * @param theDrawActions the shape
+     * @return toolbar  the toolbar
+     */
+    public  JToolBar toolBar(final List<TheShape> theDrawActions) {
+        final List<TheShape> shapes1 = theDrawActions; 
+        final ButtonGroup butGroup = new ButtonGroup();
+        final JToolBar toolbar = new JToolBar();
+        for (final TheShape a: shapes1) {
+            final JToggleButton temp = new JToggleButton(a);
+            toolbar.add(temp);
+            butGroup.add(temp);       
+        }
+        return toolbar;
+    }
+    
+    
+    /**
+     * Creates the drawing panel to be drawn on. 
+     */
+    public void drawPanel() {
+        final Dimension panelSize = new Dimension(500, 300);
+        myDrawing.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+        myDrawing.setPreferredSize(panelSize);
+        myFrame.getContentPane().add(myDrawing, BorderLayout.CENTER);
+    }
+
+
+  
+}
